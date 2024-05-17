@@ -6,7 +6,7 @@ class User {
             id SERIAL PRIMARY KEY,
             token VARCHAR(255) NOT NULL,
             username VARCHAR(255) NOT NULL,
-            remaining_bombs INTEGER DEFAULT 3,
+            remaining_bombs SMALLINT DEFAULT 3,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
     }

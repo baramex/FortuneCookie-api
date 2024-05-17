@@ -3,7 +3,7 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'BlastNote',
-    password: 'postgres',
+    password: 'admin',
     port: 5432,
 });
 

@@ -1,11 +1,13 @@
+const pool = require("../services/Database");
+
 class Defuse {
     static createTable() {
         return pool.query(`CREATE TABLE IF NOT EXISTS defuses (
             id INTEGER PRIMARY KEY,
             bomb_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
-            lon DOUBLE_PRECISION NOT NULL,
-            lat DOUBLE_PRECISION NOT NULL,
+            lon DOUBLE PRECISION NOT NULL,
+            lat DOUBLE PRECISION NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_bomb
                 FOREIGN KEY(bomb_id)

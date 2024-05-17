@@ -10,8 +10,8 @@ class Bomb {
         return pool.query(`CREATE TABLE IF NOT EXISTS bombs (
             id INTEGER PRIMARY KEY,
             state SMALLINT NOT NULL,
-            lon DOUBLE_PRECISION NOT NULL,
-            lat DOUBLE_PRECISION NOT NULL,
+            lon DOUBLE PRECISION NOT NULL,
+            lat DOUBLE PRECISION NOT NULL,
             message VARCHAR(4096) NOT NULL,
             user_id INTEGER NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
