@@ -12,6 +12,10 @@ class User {
         );`);
     }
 
+    static getId(id, user_id) {
+        return id !== "@me" ? user_id : id;
+    }
+
     static validateUsername(username) {
         return /([0-9]|[a-Z]|_){3,32}/.test(username);
     }
@@ -26,6 +30,10 @@ class User {
         }
         const token = tokgen.generate();
         return pool.query(`INSERT INTO users (token, username) VALUES ($1, $2) RETURNING *`, [token, username]);
+    }
+
+    static decreaseBombs(user_id) {
+        return pool.query(`UPDATE users SET remaining_bombs = remaining_bombs - 1 WHERE id = $1 RETURNING *`, [user_id]);
     }
 }
 
