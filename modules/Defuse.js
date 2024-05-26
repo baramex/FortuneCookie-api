@@ -3,7 +3,7 @@ const pool = require("../services/Database");
 class Defuse {
     static createTable() {
         return pool.query(`CREATE TABLE IF NOT EXISTS defuses (
-            id INTEGER PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             bomb_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             lon DOUBLE PRECISION NOT NULL,

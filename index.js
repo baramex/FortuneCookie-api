@@ -4,6 +4,8 @@ const User = require("./modules/user");
 const express = require('express');
 const bodyParser = require("body-parser");
 const { register, authenticate } = require("./routes/authentication");
+const { plantBomb, defuseBomb, getBombs } = require("./routes/bomb");
+const { getUser, getUserBombs } = require("./routes/user");
 const app = express();
 
 async function init() {

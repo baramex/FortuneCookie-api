@@ -21,11 +21,11 @@ function defuseBomb(req, res) {
     if (!req.user) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    if (!req.body || typeof req.params.id !== "number" || typeof req.body.lon !== "number" || typeof req.body.lat !== "number") {
+    if (!req.body || isNaN(Number(req.params.id)) || typeof req.body.lon !== "number" || typeof req.body.lat !== "number") {
         return res.status(400).send({ error: "Requête invalide" });
     }
-    Bomb.defuseBomb(req.params.id, req.body.lon, req.body.lat, req.user.id).then((defuse) => {
-        res.status(201).send(defuse.rows[0]);
+    Bomb.defuseBomb(Number(req.params.id), req.body.lon, req.body.lat, req.user.id).then((defused) => {
+        res.status(201).send({ message: defused.rows[0].message });
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });

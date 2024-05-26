@@ -1,10 +1,10 @@
 class Location {
-    static validateLatitude(latitude) {
-        return /^-?([0-8]?[0-9]|90)(\.[0-9]{1,10})$/.test(latitude);
+    static validateLatitude(lat) {
+        return typeof lat === "number" && lat >= -90 && lat <= 90;
     }
 
-    static validateLongitude(longitude) {
-        return /^-?([0-9]{1,2}|1[0-7][0-9]|180)(\.[0-9]{1,10})$/.test(longitude);
+    static validateLongitude(lon) {
+        return typeof lon === "number" && lon >= -180 && lon <= 180;
     }
 }
 

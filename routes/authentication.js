@@ -12,10 +12,10 @@ function register(req, res) {
 }
 
 async function authenticate(req, res, next) {
-    if (!req.headers.authorization || !req.headers.authorization?.startsWith("Token ")) {
+    if (!req.headers.authorization || !req.headers.authorization?.startsWith("Bearer ")) {
         return res.status(403).send({ error: "Non authentifié" });
     }
-    const user = await User.getUserByToken(req.headers.authenticate?.split(" ")?.[1]);
+    const user = await User.getUserByToken(req.headers.authorization?.split(" ")?.[1]);
     if (user.rowCount < 1) {
         return res.status(401).send({ error: "Non autorisé" });
     }

@@ -13,11 +13,11 @@ class User {
     }
 
     static getId(id, user_id) {
-        return id !== "@me" ? user_id : id;
+        return id !== "@me" ? user_id : Number(id);
     }
 
     static validateUsername(username) {
-        return /([0-9]|[a-Z]|_){3,32}/.test(username);
+        return /[0-9A-z_]{3,32}/.test(username);
     }
 
     static getUserByToken(token) {
@@ -26,7 +26,7 @@ class User {
 
     static createUser(username) {
         if (!this.validateUsername(username)) {
-            return Promise.reject("Nom d'utilisateur invalide");
+            throw new Error("Nom d'utilisateur invalide");
         }
         const token = tokgen.generate();
         return pool.query(`INSERT INTO users (token, username) VALUES ($1, $2) RETURNING *`, [token, username]);
