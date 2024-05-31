@@ -51,11 +51,11 @@ class Bomb {
         return pool.query(`UPDATE bombs SET state = $1 WHERE id = $2 RETURNING *`, [this.states.DEFUSED, bomb_id]);
     }
 
-    static getBombs(lon, lat) {
+    static async getBombs(lon, lat) {
         if (!Location.validateLatitude(lat) || !Location.validateLongitude(lon)) {
             throw new Error("Coordonnées invalides");
         }
-        return pool.query(`SELECT * FROM bombs WHERE state = $1 AND ST_DWithin(geography(ST_MakePoint(lon, lat)), ST_MakePoint($2, $3)::geography, 1000)`, [this.states.ACTIVE, lon, lat]);
+        return pool.query(`SELECT * FROM bombs WHERE state = $1 AND acos(sin(radians($3)) * sin(radians(lat)) + cos(radians($3)) * cos(radians(lat)) * cos(radians(lon) - radians($2))) * 6371 <= $4`, [this.states.ACTIVE, lon, lat, 0.5]);
     }
 
     static getUserBombs(user_id) {

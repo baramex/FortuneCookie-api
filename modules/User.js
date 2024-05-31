@@ -24,7 +24,7 @@ class User {
         return pool.query(`SELECT * FROM users WHERE token = $1`, [token]);
     }
 
-    static createUser(username) {
+    static async createUser(username) {
         if (!this.validateUsername(username)) {
             throw new Error("Nom d'utilisateur invalide");
         }

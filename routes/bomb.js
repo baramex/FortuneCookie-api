@@ -35,10 +35,10 @@ function getBombs(req, res) {
     if (!req.user) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    if (!req.query || typeof req.query.lon !== "number" || typeof req.query.lat !== "number") {
+    if (!req.query || isNaN(Number(req.query.lon)) || isNaN(Number(req.query.lat))) {
         return res.status(400).send({ error: "Requête invalide" });
     }
-    Bomb.getBombs(req.query.lon, req.query.lat).then((bombs) => {
+    Bomb.getBombs(Number(req.query.lon), Number(req.query.lat)).then((bombs) => {
         res.status(200).send(bombs.rows);
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
