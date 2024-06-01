@@ -13,7 +13,7 @@ class User {
     }
 
     static getId(id, user_id) {
-        return id !== "@me" ? user_id : Number(id);
+        return id === "@me" ? user_id : Number(id);
     }
 
     static validateUsername(username) {

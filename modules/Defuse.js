@@ -4,7 +4,7 @@ class Defuse {
     static createTable() {
         return pool.query(`CREATE TABLE IF NOT EXISTS defuses (
             id SERIAL PRIMARY KEY,
-            bomb_id INTEGER NOT NULL,
+            bomb_id INTEGER UNIQUE NOT NULL,
             user_id INTEGER NOT NULL,
             lon DOUBLE PRECISION NOT NULL,
             lat DOUBLE PRECISION NOT NULL,
@@ -20,6 +20,10 @@ class Defuse {
 
     static createDefuse(bomb_id, user_id, lon, lat) {
         return pool.query(`INSERT INTO defuses (bomb_id, user_id, lon, lat) VALUES ($1, $2, $3, $4) RETURNING *`, [bomb_id, user_id, lon, lat]);
+    }
+
+    static getDefuseByBombId(bomb_id) {
+        return pool.query(`SELECT * FROM defuses WHERE bomb_id = $1`, [bomb_id]);
     }
 }
 

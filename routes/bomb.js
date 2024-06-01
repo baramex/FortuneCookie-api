@@ -4,27 +4,42 @@ function plantBomb(req, res) {
     if (!req.user) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    if (!req.body || typeof req.body.lon !== "number" || typeof req.body.lat !== "number" || typeof req.body.message !== "string") {
+    if (!req.body || typeof req.body.lon !== "number" || typeof req.body.lat !== "number" || typeof req.body.message !== "string" || (req.body.radius && typeof req.body.radius !== "number")) {
         return res.status(400).send({ error: "Requête invalide" });
     }
     if (req.user.remaining_bombs < 1) {
         return res.status(403).send({ error: "Pas assez de bombes" });
     }
-    Bomb.createBomb(req.body.lon, req.body.lat, req.body.message, req.user.id).then((bomb) => {
+    Bomb.createBomb(req.body.lon, req.body.lat, req.body.message, req.user.id, req.body.radius).then((bomb) => {
         res.status(201).send(bomb.rows[0]);
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
 }
 
+async function replyBomb(req, res) {
+    if (!req.user) {
+        return res.status(401).send({ error: "Non autorisé" });
+    }
+    if (!req.body || !req.bomb || typeof req.body.message !== "string") {
+        return res.status(400).send({ error: "Requête invalide" });
+    }
+    Bomb.createBomb(req.bomb.lon, req.bomb.lat, req.body.message, req.user.id, req.bomb.radius, req.bomb.id).then((bomb) => {
+        res.status(201).send(bomb.rows[0]);
+    }).catch((error) => {
+        res.status(400).send({ error: error?.message || "Erreur inattendue" });
+    });
+
+}
+
 function defuseBomb(req, res) {
     if (!req.user) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    if (!req.body || isNaN(Number(req.params.id)) || typeof req.body.lon !== "number" || typeof req.body.lat !== "number") {
+    if (!req.body || !req.bomb || typeof req.body.lon !== "number" || typeof req.body.lat !== "number") {
         return res.status(400).send({ error: "Requête invalide" });
     }
-    Bomb.defuseBomb(Number(req.params.id), req.body.lon, req.body.lat, req.user.id).then((defused) => {
+    Bomb.defuseBomb(req.bomb.id, req.body.lon, req.body.lat, req.user.id).then((defused) => {
         res.status(201).send({ message: defused.rows[0].message });
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
@@ -45,4 +60,20 @@ function getBombs(req, res) {
     });
 }
 
-module.exports = { plantBomb, defuseBomb, getBombs };
+function bomb(req, res, next) {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+        return res.status(400).send({ error: "Requête invalide" });
+    }
+    Bomb.getBombById(id).then((bomb) => {
+        if (bomb.rowCount < 1) {
+            return res.status(404).send({ error: "Bombe introuvable" });
+        }
+        req.bomb = bomb.rows[0];
+        next();
+    }).catch((error) => {
+        res.status(400).send({ error: error?.message || "Erreur inattendue" });
+    });
+}
+
+module.exports = { plantBomb, defuseBomb, getBombs, bomb, replyBomb };
