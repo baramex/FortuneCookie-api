@@ -17,19 +17,19 @@ class Bomb {
             lat DOUBLE PRECISION NOT NULL,
             message VARCHAR(4096) NOT NULL,
             user_id INTEGER NOT NULL,
-            radius DOUBLE PRECISION DEFAULT 0.5,
+            radius REAL DEFAULT 0.5 NOT NULL,
             reference INTEGER DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_user
                 FOREIGN KEY(user_id)
-                    REFERENCES users(id)
+                    REFERENCES users(id),
             CONSTRAINT fk_reference
                 FOREIGN KEY(reference)
                     REFERENCES bombs(id)
         );`);
     }
 
-    static async createBomb(lon, lat, message, user_id, radius, reference) {
+    static async createBomb(lon, lat, message, user_id, radius = 0.5, reference) {
         if (!Location.validateLatitude(lat) || !Location.validateLongitude(lon)) {
             throw new Error("Coordonnées invalides");
         }
@@ -37,20 +37,17 @@ class Bomb {
             throw new Error("Rayon invalide");
         }
         if (reference) {
-            const ref = Defuse.getDefuseByBombId(reference);
+            const ref = await Defuse.getDefuseByBombId(reference);
             if (ref.rowCount < 1) {
                 throw new Error("Référence inexistante");
             }
             if (ref.rows[0].user_id !== user_id) {
                 throw new Error("Impossible de répondre à cette bombe");
             }
-            if (lon !== ref.rows[0].lon || lat !== ref.rows[0].lat) {
-                throw new Error("Coordonnées incompatibles avec la référence");
-            }
             if (ref.rows[0].created_at < new Date(Date.now() - 1000 * 60 * 60 * 24 * 3)) { // TODO: check if timestamp or date
                 throw new Error("Référence expirée");
             }
-            const bomb = Bomb.getBombById(reference);
+            const bomb = await Bomb.getBombById(reference);
             if (bomb.rowCount < 1) {
                 throw new Error("Référence inexistante");
             }
@@ -80,6 +77,10 @@ class Bomb {
         }
         if (bomb.rows[0].user_id === user_id) {
             throw new Error("Vous ne pouvez pas désamorcer votre propre bombe");
+        }
+        const distance = Math.acos(Math.sin(Location.toRadians(lat)) * Math.sin(Location.toRadians(bomb.rows[0].lat)) + Math.cos(Location.toRadians(lat)) * Math.cos(Location.toRadians(bomb.rows[0].lat)) * Math.cos(Location.toRadians(lon) - Location.toRadians(bomb.rows[0].lon))) * 6371;
+        if (distance > bomb.rows[0].radius) {
+            throw new Error("Distance trop grande");
         }
         await Defuse.createDefuse(bomb_id, user_id, lon, lat);
         return pool.query(`UPDATE bombs SET state = $1 WHERE id = $2 RETURNING *`, [this.states.DEFUSED, bomb_id]);

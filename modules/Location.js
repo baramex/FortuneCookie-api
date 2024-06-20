@@ -6,6 +6,10 @@ class Location {
     static validateLongitude(lon) {
         return typeof lon === "number" && lon >= -180 && lon <= 180;
     }
+
+    static toRadians(degrees) {
+        return degrees * Math.PI / 180;
+    }
 }
 
 module.exports = Location;

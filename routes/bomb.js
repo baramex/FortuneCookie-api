@@ -1,4 +1,5 @@
 const Bomb = require("../modules/Bomb");
+const Defuse = require("../modules/Defuse");
 
 function plantBomb(req, res) {
     if (!req.user) {
@@ -24,7 +25,11 @@ async function replyBomb(req, res) {
     if (!req.body || !req.bomb || typeof req.body.message !== "string") {
         return res.status(400).send({ error: "Requête invalide" });
     }
-    Bomb.createBomb(req.bomb.lon, req.bomb.lat, req.body.message, req.user.id, req.bomb.radius, req.bomb.id).then((bomb) => {
+    const defuse = await Defuse.getDefuseByBombId(req.bomb.id);
+    if (!defuse.rowCount) {
+        throw new Error("Bombe non désamorcée");
+    }
+    Bomb.createBomb(defuse.rows[0].lon, defuse.rows[0].lat, req.body.message, req.user.id, req.bomb.radius, req.bomb.id).then((bomb) => {
         res.status(201).send(bomb.rows[0]);
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
@@ -54,7 +59,7 @@ function getBombs(req, res) {
         return res.status(400).send({ error: "Requête invalide" });
     }
     Bomb.getBombs(Number(req.query.lon), Number(req.query.lat)).then((bombs) => {
-        res.status(200).send(bombs.rows);
+        res.status(200).send(bombs.rows.map(a => ({ lon: a.lon, lat: a.lat, radius: a.radius })));
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
