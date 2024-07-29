@@ -1,5 +1,5 @@
 const Bomb = require("../modules/Bomb");
-const User = require("../modules/user");
+const User = require("../modules/User");
 
 function getUser(req, res) {
     if (!req.user || User.getId(req.params.id, req.user.id) !== req.user.id) {

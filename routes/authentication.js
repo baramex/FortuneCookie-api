@@ -1,4 +1,4 @@
-const User = require("../modules/user");
+const User = require("../modules/User");
 
 function register(req, res) {
     if (!req.body || typeof req.body.username !== "string") {
