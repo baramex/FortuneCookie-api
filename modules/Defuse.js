@@ -1,4 +1,4 @@
-const pool = require("../services/Database");
+const pool = require("../services/database");
 
 class Defuse {
     static createTable() {

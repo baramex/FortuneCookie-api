@@ -1,4 +1,4 @@
-const pool = require("../services/Database");
+const pool = require("../services/database");
 const Defuse = require("./Defuse");
 const Location = require("./Location");
 const User = require("./user");

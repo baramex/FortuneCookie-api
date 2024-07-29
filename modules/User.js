@@ -1,4 +1,4 @@
-const pool = require("../services/Database");
+const pool = require("../services/database");
 const tokgen = new (require("uuid-token-generator"))(512);
 
 class User {
