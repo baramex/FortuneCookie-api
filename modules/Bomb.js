@@ -1,7 +1,7 @@
 const pool = require("../services/database");
 const Defuse = require("./Defuse");
 const Location = require("./Location");
-const User = require("./user");
+const User = require("./User");
 
 class Bomb {
     static states = {
