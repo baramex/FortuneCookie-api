@@ -1,10 +1,10 @@
 const Pool = require('pg').Pool;
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'BlastNote',
-    password: 'admin',
-    port: 5432,
+    user: process.env.db_user,
+    host: process.env.db_host,
+    database: process.env.db_name,
+    password: process.env.db_password,
+    port: process.env.db_port,
 });
 
 pool.on("error", (err) => {

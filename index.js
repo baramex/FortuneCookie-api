@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Bomb = require("./modules/Bomb");
 const Defuse = require("./modules/Defuse");
 const User = require("./modules/User");
