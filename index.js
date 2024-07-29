@@ -1,6 +1,6 @@
 const Bomb = require("./modules/Bomb");
 const Defuse = require("./modules/Defuse");
-const User = require("./modules/user");
+const User = require("./modules/User");
 const express = require('express');
 const bodyParser = require("body-parser");
 const { register, authenticate } = require("./routes/authentication");
