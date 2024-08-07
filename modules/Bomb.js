@@ -17,7 +17,7 @@ class Bomb {
             lat DOUBLE PRECISION NOT NULL,
             message VARCHAR(4096) NOT NULL,
             user_id INTEGER NOT NULL,
-            radius REAL DEFAULT 0.5 NOT NULL,
+            radius REAL DEFAULT 0.05 NOT NULL,
             reference INTEGER DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_user
@@ -90,7 +90,7 @@ class Bomb {
         if (!Location.validateLatitude(lat) || !Location.validateLongitude(lon)) {
             throw new Error("Coordonnées invalides");
         }
-        return pool.query(`SELECT * FROM bombs WHERE state = $1 AND acos(sin(radians($3)) * sin(radians(lat)) + cos(radians($3)) * cos(radians(lat)) * cos(radians(lon) - radians($2))) * 6371 <= radius`, [this.states.ACTIVE, lon, lat]);
+        return pool.query(`SELECT * FROM bombs WHERE state = $1 AND acos(sin(radians($3)) * sin(radians(lat)) + cos(radians($3)) * cos(radians(lat)) * cos(radians(lon) - radians($2))) * 6371 <= 1000`, [this.states.ACTIVE, lon, lat]);
     }
 
     static getUserBombs(user_id) {
