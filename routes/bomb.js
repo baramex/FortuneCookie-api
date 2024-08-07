@@ -5,7 +5,7 @@ function plantBomb(req, res) {
     if (!req.user) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    if (!req.body || typeof req.body.lon !== "number" || typeof req.body.lat !== "number" || typeof req.body.message !== "string" || (req.body.radius && typeof req.body.radius !== "number")) {
+    if (!req.body || typeof req.body.lon !== "number" || typeof req.body.lat !== "number" || typeof req.body.message !== "string" || (req.body.radius && typeof req.body.radius !== "number") || !req.body.message.trim()) {
         return res.status(400).send({ error: "Requête invalide" });
     }
     if (req.user.remaining_bombs < 1) {
