@@ -90,7 +90,7 @@ class Bomb {
         if (!Location.validateLatitude(lat) || !Location.validateLongitude(lon)) {
             throw new Error("Coordonnées invalides");
         }
-        return pool.query(`SELECT * FROM bombs WHERE state = $1 AND acos(sin(radians($3)) * sin(radians(lat)) + cos(radians($3)) * cos(radians(lat)) * cos(radians(lon) - radians($2))) * 6371 <= 1000`, [this.states.ACTIVE, lon, lat]);
+        return pool.query(`SELECT * FROM bombs WHERE state = $1 AND acos(sin(radians($3)) * sin(radians(lat)) + cos(radians($3)) * cos(radians(lat)) * cos(radians(lon) - radians($2))) * 6371 <= 5`, [this.states.ACTIVE, lon, lat]);
     }
 
     static getUserBombs(user_id) {
