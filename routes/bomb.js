@@ -61,7 +61,6 @@ function getBombs(req, res) {
     Bomb.getBombs(Number(req.query.lon), Number(req.query.lat)).then((bombs) => {
         res.status(200).send(bombs.rows.sort(a => a.user_id !== req.user.id).map(a => ({ id: a.id, lon: a.lon, lat: a.lat, radius: a.radius })));
     }).catch((error) => {
-        console.error(error);
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
 }
