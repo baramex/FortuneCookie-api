@@ -45,7 +45,7 @@ function defuseBomb(req, res) {
         return res.status(400).send({ error: "Requête invalide" });
     }
     Bomb.defuseBomb(req.bomb.id, req.body.lon, req.body.lat, req.user.id).then((defused) => {
-        res.status(201).send({ message: defused.rows[0].message });
+        res.status(201).send({ bombId: req.bomb.id, message: defused.rows[0].message });
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
