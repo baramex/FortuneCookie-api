@@ -27,7 +27,7 @@ class Defuse {
     }
 
     static getUserDefuses(user_id) {
-        return pool.query("SELECT defuses.id, bomb_id, defuses.user_id, defuses.lon, defuses.lat, bombs.lon AS bomb_lob, bombs.lat AS bomb_lat, defuses.created_at, bombs.created_at AS bomb_created_at, state AS bomb_state, message AS bomb_message, radius AS bomb_radius, reference AS bomb_reference FROM defuses WHERE user_id = $1 INNER JOIN bombs", [user_id]);
+        return pool.query("SELECT defuses.id, bomb_id, defuses.user_id, defuses.lon, defuses.lat, bombs.lon AS bomb_lob, bombs.lat AS bomb_lat, defuses.created_at, bombs.created_at AS bomb_created_at, state AS bomb_state, message AS bomb_message, radius AS bomb_radius, reference AS bomb_reference FROM defuses JOIN bombs WHERE user_id = $1", [user_id]);
     }
 }
 
