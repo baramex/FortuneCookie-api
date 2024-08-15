@@ -6,7 +6,7 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const { register, authenticate } = require("./routes/authentication");
 const { plantBomb, defuseBomb, getBombs, bomb, replyBomb } = require("./routes/bomb");
-const { getUser, getUserBombs } = require("./routes/user");
+const { getUser, getUserBombs, getUserDefuses } = require("./routes/user");
 const app = express();
 
 async function init() {
@@ -27,6 +27,7 @@ async function init() {
     app.get("/bombs", authenticate, getBombs);
     app.get("/users/:id", authenticate, getUser);
     app.get("/users/:id/bombs", authenticate, getUserBombs);
+    app.get("/users/:id/defuses", authenticate, getUserDefuses);
 }
 
 init();
