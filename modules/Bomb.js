@@ -6,7 +6,8 @@ const User = require("./User");
 class Bomb {
     static states = {
         ACTIVE: 1,
-        DEFUSED: 2
+        DEFUSED: 2,
+        REPLIED: 3
     };
 
     static createTable() {
@@ -36,6 +37,9 @@ class Bomb {
         if (radius && !this.validateRadius(radius)) {
             throw new Error("Rayon invalide");
         }
+        if (!message.trim() || message.length > 4096) {
+            throw new Error("Message invalide");
+        }
         if (reference) {
             const ref = await Defuse.getDefuseByBombId(reference);
             if (ref.rowCount < 1) {
@@ -54,6 +58,7 @@ class Bomb {
             if (radius !== bomb.rows[0].radius) {
                 throw new Error("Rayon incompatible avec la référence");
             }
+            pool.query("UPDATE bombs SET state = $1 WHERE id = $2", [Bomb.states.REPLIED, reference]);
         }
         const b = await pool.query(`INSERT INTO bombs (state, lon, lat, message, user_id, radius, reference) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [this.states.ACTIVE, lon, lat, message, user_id, radius, reference]);
         await User.decreaseBombs(user_id);

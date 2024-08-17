@@ -25,10 +25,13 @@ async function replyBomb(req, res) {
     if (!req.body || !req.bomb || typeof req.body.message !== "string") {
         return res.status(400).send({ error: "Requête invalide" });
     }
-    const defuse = await Defuse.getDefuseByBombId(req.bomb.id);
-    if (!defuse.rowCount) {
+    if (req.bomb.state === 1) {
         throw new Error("Bombe non désamorcée");
     }
+    if (req.bomb.state === 3) {
+        throw new Error("Bombe déjà répondue");
+    }
+    const defuse = await Defuse.getDefuseByBombId(req.bomb.id);
     Bomb.createBomb(defuse.rows[0].lon, defuse.rows[0].lat, req.body.message, req.user.id, req.bomb.radius, req.bomb.id).then((bomb) => {
         res.status(201).send(bomb.rows[0]);
     }).catch((error) => {
