@@ -94,7 +94,7 @@ class Bomb {
     }
 
     static getUserBombs(user_id) {
-        return pool.query(`SELECT * FROM bombs WHERE user_id = $1`, [user_id]);
+        return pool.query(`SELECT bomb.id, state, bomb.lon, bomb.lat, bomb.message, bomb.user_id, bomb.radius, bomb.reference, bomb.created_at, defuses.created_at AS defused_at, reply.id AS reply_id, reply.state AS reply_state FROM bombs bomb, bombs reply JOIN defuses ON bomb_id = bomb.id WHERE bomb.user_id = $1 OR reply.reference = bomb.id`, [user_id]); // ADD DEFUSES + reply (reverse of reference)
     }
 
     static getBombById(id) {
