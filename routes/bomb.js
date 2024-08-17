@@ -25,13 +25,10 @@ async function replyBomb(req, res) {
     if (!req.body || !req.bomb || typeof req.body.message !== "string") {
         return res.status(400).send({ error: "Requête invalide" });
     }
-    if (req.bomb.state === 1) {
-        throw new Error("Bombe non désamorcée");
-    }
-    if (req.bomb.state === 3) {
-        throw new Error("Bombe déjà répondue");
-    }
     const defuse = await Defuse.getDefuseByBombId(req.bomb.id);
+    if (defuse.rows[0]) {
+        return res.status(400).send({ error: "Bombe non désamorcée" });
+    }
     Bomb.createBomb(defuse.rows[0].lon, defuse.rows[0].lat, req.body.message, req.user.id, req.bomb.radius, req.bomb.id).then((bomb) => {
         res.status(201).send(bomb.rows[0]);
     }).catch((error) => {
@@ -61,7 +58,7 @@ function getBombs(req, res) {
     if (!req.query || isNaN(Number(req.query.lon)) || isNaN(Number(req.query.lat))) {
         return res.status(400).send({ error: "Requête invalide" });
     }
-    Bomb.getBombs(Number(req.query.lon), Number(req.query.lat)).then((bombs) => {
+    Bomb.getBombs(Number(req.query.lon), Number(req.query.lat), req.user.id).then((bombs) => {
         res.status(200).send(bombs.rows.filter(a => a.user_id !== req.user.id).map(a => ({ id: a.id, lon: a.lon, lat: a.lat, radius: a.radius })));
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });

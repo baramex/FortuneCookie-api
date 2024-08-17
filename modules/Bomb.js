@@ -55,10 +55,22 @@ class Bomb {
             if (bomb.rowCount < 1) {
                 throw new Error("Référence inexistante");
             }
+            if (bomb.rows[0].reference) {
+                const ref1 = await Bomb.getBombById(bomb.rows[0].reference);
+                if (ref1.rows[0]?.user_id !== user_id) {
+                    throw new Error("Cette bombe est une réponse à une bombe ne vous appartenant pas");
+                }
+            }
             if (radius !== bomb.rows[0].radius) {
                 throw new Error("Rayon incompatible avec la référence");
             }
-            pool.query("UPDATE bombs SET state = $1 WHERE id = $2", [Bomb.states.REPLIED, reference]);
+            if (bomb.rows[0].state === 1) {
+                throw new Error("Bombe non désamorcée");
+            }
+            if (bomb.rows[0].state === 3) {
+                throw new Error("Bombe déjà répondue");
+            }
+            await pool.query("UPDATE bombs SET state = $1 WHERE id = $2", [Bomb.states.REPLIED, reference]);
         }
         const b = await pool.query(`INSERT INTO bombs (state, lon, lat, message, user_id, radius, reference) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [this.states.ACTIVE, lon, lat, message, user_id, radius, reference]);
         await User.decreaseBombs(user_id);
@@ -91,11 +103,11 @@ class Bomb {
         return pool.query(`UPDATE bombs SET state = $1 WHERE id = $2 RETURNING *`, [this.states.DEFUSED, bomb_id]);
     }
 
-    static async getBombs(lon, lat) {
+    static async getBombs(lon, lat, user_id) {
         if (!Location.validateLatitude(lat) || !Location.validateLongitude(lon)) {
             throw new Error("Coordonnées invalides");
         }
-        return pool.query(`SELECT * FROM bombs WHERE state = $1 AND ((lon = $2 AND lat = $3) OR acos(sin(radians($3)) * sin(radians(lat)) + cos(radians($3)) * cos(radians(lat)) * cos(radians(lon) - radians($2))) * 6371 <= 5)`, [this.states.ACTIVE, lon, lat]);
+        return pool.query(`SELECT * FROM bombs LEFT OUTER JOIN bombs ref ON ref.id = bombs.reference WHERE bombs.state = $1 AND (bombs.reference = null OR ref.user_id = $4) AND ((bombs.lon = $2 AND bombs.lat = $3) OR acos(sin(radians($3)) * sin(radians(bombs.lat)) + cos(radians($3)) * cos(radians(bombs.lat)) * cos(radians(bombs.lon) - radians($2))) * 6371 <= 5)`, [this.states.ACTIVE, lon, lat, user_id]);
     }
 
     static getUserBombs(user_id) {
