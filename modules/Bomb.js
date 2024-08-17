@@ -94,7 +94,7 @@ class Bomb {
     }
 
     static getUserBombs(user_id) {
-        return pool.query(`SELECT bombs.id, state, bombs.lon, bombs.lat, bombs.message, bombs.user_id, bombs.radius, bombs.reference, bombs.created_at, defuses.created_at AS defused_at, reply.id AS reply_id, reply.state AS reply_state FROM bombs JOIN defuses ON bomb_id = bombs.id JOIN bombs reply ON reply.reference = bombs.id WHERE bombs.user_id = $1`, [user_id]); // ADD DEFUSES + reply (reverse of reference)
+        return pool.query(`SELECT bombs.id, bombs.state, bombs.lon, bombs.lat, bombs.message, bombs.user_id, bombs.radius, bombs.reference, bombs.created_at, defuses.created_at AS defused_at, reply.id AS reply_id, reply.state AS reply_state FROM bombs JOIN defuses ON bomb_id = bombs.id JOIN bombs reply ON reply.reference = bombs.id WHERE bombs.user_id = $1`, [user_id]); // ADD DEFUSES + reply (reverse of reference)
     }
 
     static getBombById(id) {
