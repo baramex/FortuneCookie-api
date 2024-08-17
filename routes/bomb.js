@@ -59,7 +59,6 @@ function getBombs(req, res) {
         return res.status(400).send({ error: "Requête invalide" });
     }
     Bomb.getBombs(Number(req.query.lon), Number(req.query.lat), req.user.id).then((bombs) => {
-        console.log(bombs);
         res.status(200).send(bombs.rows.filter(a => a.user_id !== req.user.id).map(a => ({ id: a.id, lon: a.lon, lat: a.lat, radius: a.radius })));
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
