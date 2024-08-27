@@ -107,6 +107,7 @@ class Bomb {
         if (!Location.validateLatitude(lat) || !Location.validateLongitude(lon)) {
             throw new Error("Coordonnées invalides");
         }
+        console.log(lon, lat, user_id)
         return pool.query(`SELECT bombs.id, bombs.user_id, bombs.lon, bombs.lat, bombs.radius FROM bombs LEFT OUTER JOIN bombs ref ON ref.id = bombs.reference WHERE bombs.state = $1 AND (bombs.reference = null OR ref.user_id = $4) AND ((bombs.lon = $2 AND bombs.lat = $3) OR acos(sin(radians($3)) * sin(radians(bombs.lat)) + cos(radians($3)) * cos(radians(bombs.lat)) * cos(radians(bombs.lon) - radians($2))) * 6371 <= 5)`, [this.states.ACTIVE, lon, lat, user_id]);
     }
 
