@@ -35,6 +35,10 @@ class User {
     static decreaseBombs(user_id) {
         return pool.query(`UPDATE users SET remaining_bombs = remaining_bombs - 1 WHERE id = $1 RETURNING *`, [user_id]);
     }
+
+    static incrementBombsEveryone() {
+        return pool.query("UPDATE users SET remaining_bombs = remaining_bombs + 1 WHERE remaining_bombs < 3");
+    }
 }
 
 module.exports = User;
