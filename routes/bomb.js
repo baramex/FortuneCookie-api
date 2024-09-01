@@ -26,7 +26,7 @@ async function replyBomb(req, res) {
         return res.status(400).send({ error: "Requête invalide" });
     }
     const defuse = await Defuse.getDefuseByBombId(req.bomb.id);
-    if (defuse.rows[0]) {
+    if (!defuse.rows[0]) {
         return res.status(400).send({ error: "Bombe non désamorcée" });
     }
     Bomb.createBomb(defuse.rows[0].lon, defuse.rows[0].lat, req.body.message, req.user.id, req.bomb.radius, req.bomb.id).then((bomb) => {
