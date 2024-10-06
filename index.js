@@ -1,19 +1,19 @@
 require("dotenv").config();
-const Bomb = require("./modules/Bomb");
-const Defuse = require("./modules/Defuse");
 const User = require("./modules/User");
 const express = require('express');
 const bodyParser = require("body-parser");
 const { register, authenticate } = require("./routes/authentication");
-const { plantBomb, defuseBomb, getBombs, bomb, replyBomb } = require("./routes/bomb");
-const { getUser, getUserBombs, getUserDefuses } = require("./routes/user");
+const { plantCookie, cookie, breakCookie, replyCookie, getCookies } = require("./routes/cookie");
+const { getUser, getUserCookies, getUserBreakages } = require("./routes/user");
+const Cookie = require("./modules/Cookie");
+const Breakage = require("./modules/Breakage");
 const app = express();
 
 async function init() {
     // Create tables & init modules
     await User.createTable();
-    await Bomb.createTable();
-    await Defuse.createTable();
+    await Cookie.createTable();
+    await Breakage.createTable();
 
     app.use(bodyParser.json());
     app.listen(3000, () => {
@@ -21,13 +21,13 @@ async function init() {
     });
 
     app.post("/register", register);
-    app.post("/bombs", authenticate, plantBomb);
-    app.post("/bombs/:id/defuse", authenticate, bomb, defuseBomb);
-    app.post("/bombs/:id/reply", authenticate, bomb, replyBomb);
-    app.get("/bombs", authenticate, getBombs);
+    app.post("/cookies", authenticate, plantCookie);
+    app.post("/cookies/:id/break", authenticate, cookie, breakCookie);
+    app.post("/cookies/:id/reply", authenticate, cookie, replyCookie);
+    app.get("/cookies", authenticate, getCookies);
     app.get("/users/:id", authenticate, getUser);
-    app.get("/users/:id/bombs", authenticate, getUserBombs);
-    app.get("/users/:id/defuses", authenticate, getUserDefuses);
+    app.get("/users/:id/cookies", authenticate, getUserCookies);
+    app.get("/users/:id/breakages", authenticate, getUserBreakages);
 }
 
 init();

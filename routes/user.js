@@ -1,6 +1,6 @@
-const Bomb = require("../modules/Bomb");
-const Defuse = require("../modules/Defuse");
 const User = require("../modules/User");
+const Cookie = require("../modules/Cookie");
+const Breakage = require("../modules/Breakage");
 
 function getUser(req, res) {
     if (User.getId(req.params.id, req.user.id) !== req.user.id) {
@@ -9,28 +9,28 @@ function getUser(req, res) {
     res.status(200).send(req.user);
 }
 
-function getUserBombs(req, res) {
+function getUserCookies(req, res) {
     const id = User.getId(req.params.id, req.user.id);
     if (id !== req.user.id) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    Bomb.getUserBombs(id).then((bombs) => {
-        res.status(200).send(bombs.rows);
+    Cookie.getUserCookies(id).then((cookies) => {
+        res.status(200).send(cookies.rows);
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
 }
 
-function getUserDefuses(req, res) {
+function getUserBreakages(req, res) {
     const id = User.getId(req.params.id, req.user.id);
     if (id !== req.user.id) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    Defuse.getUserDefuses(id).then((defuses) => {
-        res.status(200).send(defuses.rows);
+    Breakage.getUserBreakages(id).then((breakages) => {
+        res.status(200).send(breakages.rows);
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
 }
 
-module.exports = { getUser, getUserBombs, getUserDefuses };
+module.exports = { getUser, getUserCookies, getUserBreakages };

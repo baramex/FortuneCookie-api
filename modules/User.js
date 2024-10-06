@@ -7,7 +7,7 @@ class User {
             id SERIAL PRIMARY KEY,
             token VARCHAR(255) UNIQUE NOT NULL,
             username VARCHAR(32) UNIQUE NOT NULL,
-            remaining_bombs SMALLINT DEFAULT 3,
+            remaining_cookies SMALLINT DEFAULT 3,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
     }
@@ -32,12 +32,12 @@ class User {
         return pool.query(`INSERT INTO users (token, username) VALUES ($1, $2) RETURNING *`, [token, username]);
     }
 
-    static decreaseBombs(user_id) {
-        return pool.query(`UPDATE users SET remaining_bombs = remaining_bombs - 1 WHERE id = $1 RETURNING *`, [user_id]);
+    static decreaseCookie(user_id) {
+        return pool.query(`UPDATE users SET remaining_cookies = remaining_cookies - 1 WHERE id = $1 RETURNING *`, [user_id]);
     }
 
-    static incrementBombsEveryone() {
-        return pool.query("UPDATE users SET remaining_bombs = remaining_bombs + 1 WHERE remaining_bombs < 3");
+    static incrementCookiesEveryone() {
+        return pool.query("UPDATE users SET remaining_cookies = remaining_cookies + 1 WHERE remaining_cookies < 3");
     }
 }
 
