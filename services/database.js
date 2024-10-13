@@ -1,4 +1,6 @@
 const Pool = require('pg').Pool;
+
+// Se connecter à la base de donnée
 const pool = new Pool({
     user: process.env.db_user,
     host: process.env.db_host,
