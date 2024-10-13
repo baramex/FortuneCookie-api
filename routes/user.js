@@ -1,36 +1,42 @@
-const Bomb = require("../modules/Bomb");
-const Defuse = require("../modules/Defuse");
 const User = require("../modules/User");
+const Cookie = require("../modules/Cookie");
+const Breakage = require("../modules/Breakage");
 
+// Fonction API pour récupérer un utilisateur
 function getUser(req, res) {
-    if (User.getId(req.params.id, req.user.id) !== req.user.id) {
+    // req.user provient de la fonction "authenticate"
+    if (User.getId(req.params.id, req.user.id) !== req.user.id) { // Si la requête demande de récupérer un autre utilisateur que lui-même
         return res.status(401).send({ error: "Non autorisé" });
     }
     res.status(200).send(req.user);
 }
 
-function getUserBombs(req, res) {
+// Récupérer la liste des cookies d'un utilisateur
+function getUserCookies(req, res) {
+    // req.user provient de la fonction "authenticate"
     const id = User.getId(req.params.id, req.user.id);
     if (id !== req.user.id) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    Bomb.getUserBombs(id).then((bombs) => {
-        res.status(200).send(bombs.rows);
+    Cookie.getUserCookies(id).then((cookies) => {
+        res.status(200).send(cookies.rows);
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
 }
 
-function getUserDefuses(req, res) {
+// Récupérer la liste des cassages de cookies d'un utilisateur
+function getUserBreakages(req, res) {
+    // req.user provient de la fonction "authenticate"
     const id = User.getId(req.params.id, req.user.id);
     if (id !== req.user.id) {
         return res.status(401).send({ error: "Non autorisé" });
     }
-    Defuse.getUserDefuses(id).then((defuses) => {
-        res.status(200).send(defuses.rows);
+    Breakage.getUserBreakages(id).then((breakages) => {
+        res.status(200).send(breakages.rows);
     }).catch((error) => {
         res.status(400).send({ error: error?.message || "Erreur inattendue" });
     });
 }
 
-module.exports = { getUser, getUserBombs, getUserDefuses };
+module.exports = { getUser, getUserCookies, getUserBreakages };
