@@ -3,7 +3,7 @@ const Breakage = require("./Breakage");
 const Location = require("./Location");
 const User = require("./User");
 
-// En relation avec les fortunes cookies
+// En relation avec les fortune cookies
 class Cookie {
     // Les différents états de cookies
     static states = {
